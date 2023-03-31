@@ -1,0 +1,27 @@
+- name: Acte 1 - essai csr1000
+  # On va agir sur l'hôte csr1000 dans cet acte
+  hosts: csr1000
+  # Passe l'étape permettant de récupérer des informations sur
+  #   l'hôte pour gagner du temps
+  gather_facts: false
+
+  # Liste des tâches associées à notre Acte
+  tasks:
+    - name: Récupère la configuration
+      # On indique le nom du module
+      cisco.ios.ios_command:
+        # On indique ensuite ces paramètres
+        # Liste dans https://docs.ansible.com/ansible/latest/collections/cisco/ios/ios_command_module.html
+        commands: show running-config
+      # Register permet de récupérer le résultat de la commande
+      # et de le mettre dans la variable config
+      register: config
+
+    - name: Enregistre la configuration
+      # Module pour copier des fichiers
+      # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+      copy:
+        # Source : ce que l'on a récupéré dans config
+        content: " {{ config.stdout[0] }}"
+        # Nom du fichier, le terme entre accolade est une variable
+        dest: "show_run_{{ inventory_hostname }}.txt"
