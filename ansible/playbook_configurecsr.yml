@@ -1,0 +1,61 @@
+- name: Acte 2 - congigure csr1000 interfaces
+  # On va agir sur l'hôte csr1000 dans cet acte
+  hosts: csr1000
+  # Passe l'étape permettant de récupérer des informations sur
+  #   l'hôte pour gagner du temps
+  gather_facts: false
+
+  # Liste des tâches associées à notre Acte
+  tasks:
+    - name: Configuration de interface 2
+      cisco.ios.ios_config: 
+        lines: 
+        - description LAN Entreprise
+        - ip address 192.168.2.1 255.255.255.0
+        parents: interface GigabitEthernet2
+
+    - name: Configuration de interface 3
+      cisco.ios.ios_config:
+        lines: 
+        - description LAN DMZ
+        - ip address 192.168.3.1 255.255.255.0
+        parents: interface GigabitEthernet3
+
+    - name: Configuration de interface 4
+      cisco.ios.ios_config:
+        lines:
+        - description LAN Admin
+        - ip address 192.168.4.1 255.255.255.0
+        parents: interface GigabitEthernet4
+
+    - name: Lancer les interfaces
+      cisco.ios.ios_interfaces:
+       config:
+       - name: GigabitEthernet2
+         description: LAN Entreprise
+         enabled: true
+       - name: GigabitEthernet3
+         description: LAN DMZ
+         enabled: true
+       - name: GigabitEthernet4
+         description: LAN Admin
+         enabled: true
+
+    - name: Récupère les  interfaces
+      # On indique le nom du module
+      cisco.ios.ios_command:
+         # On indique ensuite ces paramètres
+        # Liste dans https://docs.ansible.com/ansible/latest/collections/cisco/ios/ios_command_module.html
+        commands: show ip interface brief
+      # Register permet de récupérer le résultat de la commande
+      # et de le mettre dans la variable config
+      register: int
+
+    - name: Enregistre les intarfaces
+      # Module pour copier des fichiers
+      # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+      copy:
+        # Source : ce que l'on a récupéré dans config
+        content: " {{ int.stdout[0] }}"
+        # Nom du fichier, le terme entre accolade est une variable
+        dest: "interface_{{ inventory_hostname }}.txt"
