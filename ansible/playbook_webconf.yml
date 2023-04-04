@@ -1,0 +1,8 @@
+- name: Acte 2 - essai serv_web
+  hosts: serv_web
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Lister le répertoire /home/utilisateur
+      ansible.builtin.raw: ls -la

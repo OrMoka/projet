@@ -1,5 +1,6 @@
-[servs_win2016]
-serv_win2016 ansible_host=161.3.51.223
+[serveurs]
+serv_ansible ansible_host=192.168.103.202
+serv_web ansible_host=192.168.103.243
 
 [routeurs]
-csr1000 ansible_host=161.3.59.229
+csr1000 ansible_host=192.168.103.200
