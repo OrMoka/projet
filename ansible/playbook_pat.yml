@@ -1,0 +1,9 @@
+- name: PAT
+  hosts: csr1000
+  gather_facts: false
+  tasks:
+    - name: Interface out
+      cisco.ios.ios_config:
+        lines:
+        - ip nat outside
+        parents: interface GigabitEthernet1
