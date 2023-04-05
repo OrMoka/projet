@@ -7,3 +7,40 @@
         lines:
         - ip nat outside
         parents: interface GigabitEthernet1
+    - name: Interface in
+      cisco.ios.ios_config:
+        lines:
+        - ip nat inside
+        parents: interface GigabitEthernet{{item}}
+      loop:
+        - 2
+        - 3
+        - 4
+    - name: Mise en place des ACLs
+      cisco.ios.ios_config:
+        lines: 
+        - access-list 10 permit 192.168.{{item}}.0 0.0.0.255 
+      loop:
+        - 2
+        - 3
+        - 4
+    - name: Création du NAT
+      cisco.ios.ios_config:
+        lines:
+        - ip nat inside source list 10 interface GigabitEthernet1 overload
+
+    - name: Changer de port
+      cisco.ios.ios_config:
+        lines: 
+        - ip nat inside source static tcp 192.168.3.2 80 interface GigabitEthernet1 80
+        - ip nat inside source static tcp 192.168.4.2 22 interface GigabitEthernet1 2222
+
+    - name: Récupère le NAT
+      cisco.ios.ios_command:
+        commands: show ip nat translate
+      register: nat
+
+    - name: Enregistre le NAT
+      copy:
+        content: " {{ nat.stdout[0] }}"
+        dest: "Nat_{{ inventory_hostname }}.txt"

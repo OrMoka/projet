@@ -1,8 +1,8 @@
  Building configuration...
 
-Current configuration : 6738 bytes
+Current configuration : 7200 bytes
 !
-! Last configuration change at 06:44:54 UTC Tue Apr 4 2023
+! Last configuration change at 07:13:58 UTC Wed Apr 5 2023 by cisco
 !
 version 16.12
 service timestamps debug datetime msec
@@ -37,6 +37,10 @@ call-home
 !
 !
 ip domain name example.netacad.com
+!
+ip dhcp pool Entreprise
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.1 
 !
 !
 !
@@ -177,27 +181,31 @@ redundancy
 interface GigabitEthernet1
  description VBox
  ip address dhcp
+ ip nat outside
  negotiation auto
  no mop enabled
  no mop sysid
 !
 interface GigabitEthernet2
- no ip address
- shutdown
+ description LAN Entreprise
+ ip address 192.168.2.1 255.255.255.0
+ ip nat inside
  negotiation auto
  no mop enabled
  no mop sysid
 !
 interface GigabitEthernet3
- no ip address
- shutdown
+ description LAN DMZ
+ ip address 192.168.3.1 255.255.255.0
+ ip nat inside
  negotiation auto
  no mop enabled
  no mop sysid
 !
 interface GigabitEthernet4
- no ip address
- shutdown
+ description LAN Admin
+ ip address 192.168.4.1 255.255.255.0
+ ip nat inside
  negotiation auto
  no mop enabled
  no mop sysid
@@ -207,8 +215,13 @@ no ip http server
 ip http authentication local
 ip http secure-server
 !
+ip nat inside source list 10 interface GigabitEthernet1 overload
 !
 !
+ip access-list standard 10
+ 10 permit 192.168.2.0 0.0.0.255
+ 20 permit 192.168.3.0 0.0.0.255
+ 30 permit 192.168.4.0 0.0.0.255
 !
 !
 !

@@ -1,0 +1,119 @@
+- name: Acte 1 - congigure csr1000
+  hosts: csr1000
+  gather_facts: false
+
+  tasks:
+    - name: Configuration de interface
+      cisco.ios.ios_config:
+        lines:
+        - description LAN Entreprise
+        - ip address 192.168.{{item}}.1 255.255.255.0
+        parents: interface GigabitEthernet{{item}}
+      loop:
+        - 2
+        - 3
+        - 4
+
+    - name: Lancer les interfaces
+      cisco.ios.ios_interfaces:
+       config:
+       - name: GigabitEthernet2
+         description: LAN Entreprise
+         enabled: true
+       - name: GigabitEthernet3
+         description: LAN DMZ
+         enabled: true
+       - name: GigabitEthernet4
+         description: LAN Admin
+         enabled: true
+
+    - name: Récupère les  interfaces
+      cisco.ios.ios_command:
+        commands: show ip interface brief
+      register: int
+
+    - name: Enregistre les intarfaces
+      copy:
+        content: " {{ int.stdout[0] }}"
+        dest: "interface_{{ inventory_hostname }}.txt"
+
+    - name: Supression de l'ancien service DHCP
+      cisco.ios.ios_config:
+        lines:
+        - no ip dhcp pool Entreprise
+
+
+    - name: Configuration du service DHCP
+      cisco.ios.ios_config:
+        lines:
+        - ip dhcp pool Entreprise
+        - network 192.168.2.0 255.255.255.0
+        - default-router 192.168.2.1
+        - exit
+        - service dhcp
+
+    - name: Sauvegarde du service DHCP
+      cisco.ios.ios_command:
+        commands: show ip dhcp pool
+      register: dhcp
+
+    - name: Enregistre les intarfaces
+      copy:
+        content: " {{ dhcp.stdout[0] }} "
+        dest: "DHCP_POOL_{{ inventory_hostname }}.txt"
+
+    - name: Interface out
+      cisco.ios.ios_config:
+        lines:
+        - ip nat outside
+        parents: interface GigabitEthernet1
+
+    - name: Interface in
+      cisco.ios.ios_config:
+        lines:
+        - ip nat inside
+        parents: interface GigabitEthernet{{item}}
+      loop:
+        - 2
+        - 3
+        - 4
+
+    - name: Mise en place des ACLs
+      cisco.ios.ios_config:
+        lines:
+        - access-list 10 permit 192.168.{{item}}.0 0.0.0.255
+      loop:
+        - 2
+        - 3
+        - 4
+
+    - name: Création du NAT
+      cisco.ios.ios_config:
+        lines:
+        - ip nat inside source list 10 interface GigabitEthernet1 overload
+
+    - name: Changer de port
+      cisco.ios.ios_config:
+        lines:
+        - ip nat inside source static tcp 192.168.3.2 80 interface GigabitEthernet1 80
+        - ip nat inside source static tcp 192.168.4.2 22 interface GigabitEthernet1 2222
+
+    - name: Récupère le NAT 
+      cisco.ios.ios_command:
+        commands: show ip nat translate
+      register: nat
+
+    - name: Enregistre le NAT
+      copy:
+        content: " {{ nat.stdout[0] }}"
+        dest: "Nat_{{ inventory_hostname }}.txt"
+
+    - name: Récupère la configuration
+      cisco.ios.ios_command:
+        commands: show running-config
+      register: config
+
+    - name: Enregistre la configuration
+      copy:
+        content: " {{ config.stdout[0] }}"
+        dest: "show_run_{{ inventory_hostname }}.txt"

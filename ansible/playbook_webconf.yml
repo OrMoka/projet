@@ -6,3 +6,6 @@
   tasks:
     - name: Lister le répertoire /home/utilisateur
       ansible.builtin.raw: ls -la
+    - name: Apt update
+      ansible.builtin.apt:
+        updat_cache: yes
