@@ -7,27 +7,16 @@
 
   # Liste des tâches associées à notre Acte
   tasks:
-    - name: Configuration de interface 2
-      cisco.ios.ios_config: 
-        lines: 
-        - description LAN Entreprise
-        - ip address 192.168.2.1 255.255.255.0
-        parents: interface GigabitEthernet2
-
-    - name: Configuration de interface 3
-      cisco.ios.ios_config:
-        lines: 
-        - description LAN DMZ
-        - ip address 192.168.3.1 255.255.255.0
-        parents: interface GigabitEthernet3
-
-    - name: Configuration de interface 4
+    - name: Configuration de interface
       cisco.ios.ios_config:
         lines:
-        - description LAN Admin
-        - ip address 192.168.4.1 255.255.255.0
-        parents: interface GigabitEthernet4
-
+        - description LAN Entreprise
+        - ip address 192.168.{{item}}.1 255.255.255.0
+        parents: interface GigabitEthernet{{item}}
+      loop:
+        - 2
+        - 3
+        - 4
     - name: Lancer les interfaces
       cisco.ios.ios_interfaces:
        config:
