@@ -1,2 +1,3 @@
 ---
 ansible_user : utilisateur
+ansible_password: toor

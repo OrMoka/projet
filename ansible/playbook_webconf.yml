@@ -4,8 +4,23 @@
   become: yes
 
   tasks:
-    - name: Lister le répertoire /home/utilisateur
-      ansible.builtin.raw: ls -la
     - name: Apt update
       ansible.builtin.apt:
         updat_cache: yes
+
+    - name: Installer apache2
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Copie de index.html
+      ansible.builtin.copy:
+        src: /files/sites_web/
+        dest: /var/www/html/
+        owner: www-data
+        mode: '0600'
+
+    - name:  Restart le serveur Apache
+      ansible.builtin.systemd: 
+        state: restarted
+        enabled: true
