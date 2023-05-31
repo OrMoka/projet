@@ -3,4 +3,4 @@ serv_ansible ansible_host=192.168.4.2
 serv_web ansible_host=192.168.3.2
 
 [routeurs]
-csr1000 ansible_host=192.168.103.200
+csr1000 ansible_host=192.168.103.244

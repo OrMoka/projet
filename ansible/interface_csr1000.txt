@@ -1,5 +1,5 @@
  Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet1       192.168.103.200 YES DHCP   up                    up      
-GigabitEthernet2       192.168.2.1     YES manual up                    up      
-GigabitEthernet3       192.168.3.1     YES manual up                    up      
-GigabitEthernet4       192.168.4.1     YES manual up                    up
+GigabitEthernet1       192.168.103.244 YES DHCP   up                    up      
+GigabitEthernet2       192.168.2.1     YES manual down                  down    
+GigabitEthernet3       192.168.3.1     YES manual down                  down    
+GigabitEthernet4       192.168.4.1     YES manual down                  down

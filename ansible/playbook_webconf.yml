@@ -6,7 +6,7 @@
   tasks:
     - name: Apt update
       ansible.builtin.apt:
-        updat_cache: yes
+        update_cache: yes
 
     - name: Installer apache2
       ansible.builtin.apt:
@@ -15,7 +15,7 @@
 
     - name: Copie de index.html
       ansible.builtin.copy:
-        src: /files/sites_web/
+        src: /files/site_web/index.html
         dest: /var/www/html/
         owner: www-data
         mode: '0600'
