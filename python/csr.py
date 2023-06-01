@@ -13,8 +13,9 @@ router = {
 # Réalise la connexion ssh avec le serveur Linux
 net_connect = ConnectHandler(**router)
 
-a = 1
-interface = net_connect.send_command('sh ip int gigabitethernet'+a)
+for a in  [1,2,3,4]:
+   interface = net_connect.send_command('sh ip int gigabitethernet'+str(a))
+   print(interface)
 
 int_br = net_connect.send_command('sh ip int brief')
 print(int_br)
