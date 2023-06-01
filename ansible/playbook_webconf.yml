@@ -15,7 +15,7 @@
 
     - name: Copie de index.html
       ansible.builtin.copy:
-        src: /files/site_web/index.html
+        src: site_web/index.html
         dest: /var/www/html/
         owner: www-data
         mode: '0600'
@@ -24,3 +24,4 @@
       ansible.builtin.systemd: 
         state: restarted
         enabled: true
+        name: apache2

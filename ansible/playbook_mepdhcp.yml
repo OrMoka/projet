@@ -27,7 +27,7 @@
         commands: show ip dhcp pool
       register: dhcp
 
-    - name: Enregistre les intarfaces
+    - name: Enregistre les interfaces
       copy:
         content: " {{ dhcp.stdout[0] }} "
         dest: "DHCP_POOL_{{ inventory_hostname }}.txt"
