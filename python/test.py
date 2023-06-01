@@ -21,7 +21,7 @@ serv_web = {
 connection = ConnectHandler(**serv_web)
 
 # Envoi la commande ping pour tester si on peut joindre le 8.8.8.8 depuis le serveur web
-test = connection.send_command('ping -c 4 -W 1 8.8.8.8')
+test = connection.send_command('ping -c 4 -W 1 192.168.4.2')
 
 #Affiche le résultat du test
 print(">>> Serv_Web : Test de connectivité serveur Linux vers extérieur (dns google)")
@@ -41,5 +41,8 @@ else:
    print("xxx Problème de connectivtité")
 
 
-ns = connection.send_command('nslookup -timeout=1 www.google.fr') 
-print(ns)
+#ns = connection.send_command('nslookup -timeout=1 www.google.fr') 
+#print(ns)
+
+#web = connection.send_command('wget --timeout 1 -t 1 127.0.0.1')
+#print(web)
